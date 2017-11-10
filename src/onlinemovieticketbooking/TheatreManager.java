@@ -37,8 +37,20 @@ public class TheatreManager extends javax.swing.JFrame {
     public TheatreManager() {
         initComponents();
         loadAll();
+        viewbook.addMouseListener(new java.awt.event.MouseAdapter(){
+                @Override
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                       
+                        int row=viewbook.rowAtPoint(evt.getPoint());
+                         int k=Integer.parseInt(viewbook.getValueAt(row,8).toString());
+                        System.out.println(".mouseClicked() bkid="+k);
+                        
+                }});
     }
-
+    
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
