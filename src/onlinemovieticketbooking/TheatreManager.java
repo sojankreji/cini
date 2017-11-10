@@ -42,13 +42,56 @@ public class TheatreManager extends javax.swing.JFrame {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
                        
                         int row=viewbook.rowAtPoint(evt.getPoint());
-                         int k=Integer.parseInt(viewbook.getValueAt(row,8).toString());
+                         int k=Integer.parseInt(viewbook.getValueAt(row,7).toString());
                         System.out.println(".mouseClicked() bkid="+k);
+                         int response = JOptionPane.showConfirmDialog(null, "do you want to delete the booking?");
+                     System.out.println("res:"+response);
+                     if(response==0){
+                         try{
+                            deleteqry(k);
+                         }
+                         catch(Exception e){
+                             System.out.print(e);
+                         }
+                            showSucc();
+                            
+                     }
                         
-                }});
+                }
+
+            private void deleteqry(int k) throws Exception{
+                deleteSeatList(k);
+                deleteBookings(k);
+                 // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            private void deleteSeatList(int bkid) throws Exception{
+                Class.forName("com.mysql.jdbc.Driver");
+                Connection con = DriverManager.getConnection("jdbc:mysql://localhost/cinimanage", "root", "");
+                PreparedStatement p = con.prepareStatement("Update Seatlist set `status`=0 where bookingId=?");
+                p.setInt(1, bkid);
+                System.out.println(".deleteSeatList()");
+                int rs = p.executeUpdate();
+            }
+
+            private void deleteBookings(int k) throws Exception{
+                 Class.forName("com.mysql.jdbc.Driver");
+                Connection con = DriverManager.getConnection("jdbc:mysql://localhost/cinimanage", "root", "");
+                PreparedStatement p = con.prepareStatement("delete  from bookings where  TicketNumber=?");
+                p.setInt(1, k);
+                int rs = p.executeUpdate();//
+                System.out.println(".deleteBookings()");
+            }
+
+            
+        });
     }
     
-    
+    private void showSucc() {
+                JOptionPane.showMessageDialog(this, "Ticket Cancelled Succesfully"); 
+                performsearch();
+                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
     
     
     /**
@@ -894,25 +937,7 @@ catch(Exception e)
     }//GEN-LAST:event_browse1ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        try
-        {
-            Class.forName("com.mysql.jdbc.Driver");
-            Connection con=DriverManager.getConnection("jdbc:mysql://localhost/cinimanage","root","");
-            Statement stmt=con.createStatement();
-            String Sdate=SearchTicketNumber.getText();
-
-            String str1="SELECT `User`,`BookingDate`,`Movie`,`AmountPaid`,`NoOfTickets`,`ShowDate` FROM `bookings` WHERE `TicketNumber` like  '%"+Sdate+"%'";
-
-            //            System.out.print(str1);
-            ResultSet rs1=stmt.executeQuery(str1);
-
-            Ticket.setModel(DbUtils.resultSetToTableModel(rs1));
-
-        }
-        catch(Exception e)
-        {
-
-        }
+       performsearch();
 
         // TODO add your handling code here:
        
@@ -1088,6 +1113,28 @@ x.show();        // TODO add your handling code here:
        
    });
     
+    }
+
+    private void performsearch() {
+        try
+        {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con=DriverManager.getConnection("jdbc:mysql://localhost/cinimanage","root","");
+            Statement stmt=con.createStatement();
+            String Sdate=SearchTicketNumber.getText();
+
+            String str1="SELECT `User`,`BookingDate`,`Movie`,`AmountPaid`,`NoOfTickets`,`ShowDate` FROM `bookings` WHERE `TicketNumber` like  '%"+Sdate+"%'";
+
+            //            System.out.print(str1);
+            ResultSet rs1=stmt.executeQuery(str1);
+
+            Ticket.setModel(DbUtils.resultSetToTableModel(rs1));
+
+        }
+        catch(Exception e)
+        {
+
+        }
     }
 }
 class Tlist{
